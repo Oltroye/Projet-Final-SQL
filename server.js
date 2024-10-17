@@ -22,7 +22,19 @@ db.exec(sqlScript, (err) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'html.html'));
+    res.sendFile(path.join(__dirname, 'site/homepage.html'));
+});
+app.get('/employees', (req, res) => {
+    res.sendFile(path.join(__dirname, 'site/employees.html'));
+});
+app.get('/formular', (req, res) => {
+    res.sendFile(path.join(__dirname, 'site/formular.html'));
+});
+app.get('/department', (req, res) => {
+    res.sendFile(path.join(__dirname, 'site/department.html'));
+});
+app.get('/product', (req, res) => {
+    res.sendFile(path.join(__dirname, 'site/product.html'));
 });
 
 
