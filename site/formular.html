@@ -12,5 +12,151 @@
     <a href="/employees"><button type="button" class="btn"><span class="text">employees</span></button></a>
     <a href="/formular"><button type="button" class="btn"><span class="text">formular</span></button></a>
     <a href="/department"><button type="button" class="btn"><span class="text">department</span></button></a>
+    <h1>Add New Employee</h1>
+    <form id="employeeForm" action="/add-employee" method="POST">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required>
+
+        <label for="jobId">Job:</label>
+        <div id="jobOptions"></div>
+
+        <label for="birthDate">Birth Date:</label>
+        <input type="date" id="birthDate" name="birthDate" required>
+
+        <label for="hireDate">Hire Date:</label>
+        <input type="date" id="hireDate" name="hireDate" required>
+
+        <label for="companyId">Company:</label>
+        <div id="companyOptions"></div>
+
+        <label for="departmentId">Department:</label>
+        <div id="departmentOptions"></div>
+
+        <label for="senior">Senior:</label>
+        <div id="seniorOptions"></div>
+
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" required>
+
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
+
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" required>
+
+        <label for="status">Status:</label>
+        <input type="checkbox" id="status" name="status" value="1"><br>
+
+        <button type="submit">Add Employee</button>
+    </form>
+    <h1>Add New Product</h1>
+    <form action="/add-product" method="POST">
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" required><br><br>
+
+        <button type="submit">Add Product</button>
+    </form>
+    <h1>Add New Job</h1>
+    <form id="jobForm" action="/add-job" method="POST">
+        <label for="jobName">Job Name:</label>
+        <input type="text" id="jobName" name="jobName" required>
+
+        <button type="submit">Add Job</button>
+    </form>
+    <h1>Add New Company</h1>
+    <form id="companyForm" action="/add-company" method="POST">
+        <label for="companyName">Company Name:</label>
+        <input type="text" id="companyName" name="companyName" required>
+
+        <label for="companySize">Company Size:</label>
+        <input type="number" id="companySize" name="companySize" required>
+
+        <label for="activity">Activity:</label>
+        <input type="text" id="activity" name="activity" required>
+
+        <button type="submit">Add Company</button>
+    </form>
+    <h1>Add New Department</h1>
+    <form id="departmentForm" action="/add-department" method="POST">
+        <label for="companyId">Company:</label>
+        <div id="companyOptionss"></div>
+
+        <label for="departmentName">Department Name:</label>
+        <input type="text" id="departmentName" name="departmentName" required><br><br>
+
+        <button type="submit">Add Department</button>
+    </form>
+
+    <script>
+        async function fetchData() {
+            const responseJobs = await fetch('/api/jobs');
+            const jobs = await responseJobs.json();
+            const jobOptions = document.getElementById('jobOptions');
+            jobs.forEach(job => {
+                jobOptions.innerHTML += `
+                    <input type="radio" id="job-${job.JobId}" name="jobId" value="${job.JobId}" required>
+                    <label for="job-${job.JobId}">${job.JobName}</label>
+                `;
+            });
+
+            const responseCompanies = await fetch('/api/companies');
+            const companies = await responseCompanies.json();
+            const companyOptions = document.getElementById('companyOptions');
+            companies.forEach(company => {
+                companyOptions.innerHTML += `
+                    <input type="radio" id="company-${company.CompanyId}" name="companyId" value="${company.CompanyId}" required>
+                    <label for="company-${company.CompanyId}">${company.CompanyName}</label>
+                `;
+            });
+            companies.forEach(company => {
+                companyOptions.innerHTML += `
+                    <input type="radio" id="company-${company.CompanyId}" name="companyId" value="${company.CompanyId}" required>
+                    <label for="company-${company.CompanyId}">${company.CompanyName}</label>
+                `;
+            });
+
+            const responseDepartments = await fetch('/api/departments');
+            const departments = await responseDepartments.json();
+            const departmentOptions = document.getElementById('departmentOptions');
+            departments.forEach(department => {
+                departmentOptions.innerHTML += `
+                    <input type="radio" id="department-${department.DepartementId}" name="departmentId" value="${department.DepartementId}" required>
+                    <label for="department-${department.DepartementId}">${department.DepartementName}</label>
+                `;
+            });
+
+            const responseSeniors = await fetch('/api/seniors');
+            const seniors = await responseSeniors.json();
+            const seniorOptions = document.getElementById('seniorOptions');
+            seniors.forEach(senior => {
+                seniorOptions.innerHTML += `
+                    <input type="radio" id="senior-${senior.EmpoyeeId}" name="senior" value="${senior.EmpoyeeId}">
+                    <label for="senior-${senior.EmpoyeeId}">${senior.FirstName} ${senior.LastName}</label>
+                `;
+            });
+            
+            const response = await fetch('/api/companies');
+            const companiees = await response.json();
+            const companyOptionss = document.getElementById('companyOptionss');
+            companiees.forEach(company => {
+                companyOptionss.innerHTML += `
+                    <input type="radio" id="company-${company.CompanyId}" name="companyId" value="${company.CompanyId}" required>
+                    <label for="company-${company.CompanyId}">${company.CompanyName}</label>
+                `;
+            });
+        }
+        async function fetchCompanies() {
+            
+        }
+
+        fetchCompanies();
+        fetchData();
+    </script>
 </body>
 </html>
