@@ -38,10 +38,6 @@ app.get('/product', (req, res) => {
     res.sendFile(path.join(__dirname, 'site/product.html'));
 });
 
-app.get('/employees-form', (req, res) => {
-    res.sendFile(path.join(__dirname, 'site/employees-form.html'));
-});
-
 app.get('/api/jobs', (req, res) => {
     const query = `SELECT JobId, JobName FROM jobs`;
     db.all(query, [], (err, rows) => {
