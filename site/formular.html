@@ -108,14 +108,13 @@
             const responseCompanies = await fetch('/api/companies');
             const companies = await responseCompanies.json();
             const companyOptions = document.getElementById('companyOptions');
+            const companyOptionss = document.getElementById('companyOptionss');
             companies.forEach(company => {
                 companyOptions.innerHTML += `
                     <input type="radio" id="company-${company.CompanyId}" name="companyId" value="${company.CompanyId}" required>
                     <label for="company-${company.CompanyId}">${company.CompanyName}</label>
                 `;
-            });
-            companies.forEach(company => {
-                companyOptions.innerHTML += `
+                companyOptionss.innerHTML += `
                     <input type="radio" id="company-${company.CompanyId}" name="companyId" value="${company.CompanyId}" required>
                     <label for="company-${company.CompanyId}">${company.CompanyName}</label>
                 `;
@@ -140,22 +139,7 @@
                     <label for="senior-${senior.EmpoyeeId}">${senior.FirstName} ${senior.LastName}</label>
                 `;
             });
-            
-            const response = await fetch('/api/companies');
-            const companiees = await response.json();
-            const companyOptionss = document.getElementById('companyOptionss');
-            companiees.forEach(company => {
-                companyOptionss.innerHTML += `
-                    <input type="radio" id="company-${company.CompanyId}" name="companyId" value="${company.CompanyId}" required>
-                    <label for="company-${company.CompanyId}">${company.CompanyName}</label>
-                `;
-            });
         }
-        async function fetchCompanies() {
-            
-        }
-
-        fetchCompanies();
         fetchData();
     </script>
 </body>
