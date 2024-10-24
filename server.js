@@ -68,6 +68,24 @@ app.get('/api/employee', (req, res) => {
     });
 });
 
+app.get('/api/departments', (req, res) => {
+    const query = `
+        SELECT 
+            d.DepartementId,
+            d.DepartementName,
+            c.CompanyName
+        FROM departements d
+        LEFT JOIN companies c ON d.CompanyId = c.CompanyId
+    `;
+    
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
 app.get('/api/jobs', (req, res) => {
     const query = `SELECT JobId, JobName FROM jobs`;
     db.all(query, [], (err, rows) => {
@@ -100,6 +118,26 @@ app.get('/api/departments', (req, res) => {
 
 app.get('/api/seniors', (req, res) => {
     const query = `SELECT EmployeeId, FirstName, LastName FROM employees`;
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
+app.get('/api/employee-products', (req, res) => {
+    const query = `
+        SELECT 
+            e.EmployeeId,
+            e.FirstName,
+            e.LastName,
+            p.ProductName
+        FROM employee_product ep
+        JOIN employees e ON ep.EmpoyeeId = e.EmployeeId
+        JOIN products p ON ep.ProductId = p.ProductId
+    `;
+    
     db.all(query, [], (err, rows) => {
         if (err) {
             return res.status(500).send(err.message);
