@@ -10,11 +10,10 @@
     <header>
         <nav>
             <ul>
-                <li><a href="homepage.html">Accueil</a></li>
-                <li><a href="department.html">Département</a></li>
-                <li><a href="employees.html">Employé</a></li>
-                <li><a href="formular.html">Formulaire</a></li>
-                <li><a href="product.html">Produit</a></li>
+                <li><a href="/">Département</a></li>
+                <li><a href="/employees">Employé</a></li>
+                <li><a href="/formular">Formulaire</a></li>
+                <li><a href="/product">Produit</a></li>
             </ul>
         </nav>
     </header>
@@ -85,7 +84,7 @@
 
         <label for ="senior">Responsable</label>
         <select id="seniorOptions" name="senior">
-            <option value="">Sélectionnez un responsable</option>
+            <option>Sélectionnez un responsable</option>
         </select><br><br>
 
         <label for="birthDate">Date de Naissance :</label>
@@ -125,10 +124,24 @@
 
         <button type="submit">Ajouter un produit</button>
     </form>
+
+    <h1>employee vend un nouveau produit</h1>
+    <form action="/add-link-product-employee" method="POST">
+        <label for="productNameLink">Nom du produit :</label>
+        <select id="productNameLink" name="productNamelink" required>
+            <option value="">Sélectionnez un produit</option>
+        </select>
+
+        <label for="employeeNameLink">Nom de l'employé :</label>
+        <select id="employeeNameLink" name="employeeNamelink" required>
+            <option value="">Sélectionnez un employé</option>
+        </select>
+        
+        <button type="submit">Ajouter un produit</button>
+    </form>
     
     <script>
         async function fetchData() {
-            // Récupérer les jobs et remplir les options des jobs
             const responseJobs = await fetch('/api/jobs');
             const jobs = await responseJobs.json();
             const jobOptions = document.getElementById('jobOptions');
@@ -152,7 +165,6 @@
             });
 
     
-            // Récupérer les départements et remplir les options des départements
             const responseDepartments = await fetch('/api/departments');
             const departments = await responseDepartments.json();
             const departmentOptions = document.getElementById('departmentOptions');
@@ -162,21 +174,34 @@
                 `;
             });
     
-            // Récupérer les seniors (employés) et remplir les options des seniors
             const responseSeniors = await fetch('/api/seniors');
             const seniors = await responseSeniors.json();
             const seniorOptions = document.getElementById('seniorOptions');
-            seniorOptions.innerHTML = `<option value="">Sélectionnez un responsable</option>`; // Ajout d'une option par défaut
+            seniorOptions.innerHTML = `<option value="">Sélectionnez un responsable</option>`;
 
             seniors.forEach(senior => {
                 seniorOptions.innerHTML += `
-                    <option value="${senior.EmpoyeeId}">${senior.FirstName} ${senior.LastName}</option>
+                    <option value="${senior.EmployeeId}">${senior.FirstName} ${senior.LastName}</option>
                 `;
             });
-        }
-    
-        async function fetchCompanies() {
-    
+
+            const responseProducts = await fetch('/api/products');
+            const products = await responseProducts.json();
+            const productNameLink = document.getElementById('productNameLink');
+            products.forEach(product => {
+                productNameLink.innerHTML += `
+                    <option value="${product.ProductId}">${product.ProductName}</option>
+                `;
+            });
+
+            const responseEmployees = await fetch('/api/employee');
+            const employees = await responseEmployees.json();
+            const employeeNameLink = document.getElementById('employeeNameLink');
+            employees.forEach(employee => {
+                employeeNameLink.innerHTML += `
+                    <option value="${employee.EmployeeId}">${employee.FirstName} ${employee.LastName}</option>
+                `;
+            });
         }
     
         

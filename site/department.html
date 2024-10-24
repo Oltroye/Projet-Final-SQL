@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Employee Management</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Département</a></li>
+                <li><a href="/employees">Employé</a></li>
+                <li><a href="/formular">Formulaire</a></li>
+                <li><a href="/product">Produit</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Liste des Départements</h1>
+    <form id="filterForm">
+        <div>
+            <label for="companyFilter">Filtrer par Entreprise:</label>
+            <select id="companyFilter" name="companyId">
+                <option value="">Tous</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="departmentFilter">Filtrer par Département:</label>
+            <select id="departmentFilter" name="departmentId">
+                <option value="">Tous</option>
+            </select>
+        </div>
+
+        <button type="submit">Filtrer</button>
+    </form>
+    
+    <table id="departmentsTable">
+        <thead>
+            <tr>
+                <th>Nom du Département</th>
+                <th>Entreprise</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        function fetchCompanies() {
+            fetch('/api/companies')
+                .then(response => response.json())
+                .then(data => {
+                    const companySelect = document.getElementById('companyFilter');
+                    data.forEach(company => {
+                        const option = document.createElement('option');
+                        option.value = company.CompanyId;
+                        option.textContent = company.CompanyName;
+                        companySelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Erreur lors de la récupération des entreprises:', error));
+        }
+
+        function fetchDepartments(filters = {}) {
+            const params = new URLSearchParams(filters).toString();
+            fetch(`/api/departments${params ? '?' + params : ''}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#departmentsTable tbody');
+                    tbody.innerHTML = '';
+                    data.forEach(department => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${department.DepartementName}</td>
+                            <td>${department.CompanyName ? department.CompanyName : 'N/A'}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Erreur lors de la récupération des départements:', error));
+        }
+
+        document.getElementById('filterForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const filters = {
+                companyId: document.getElementById('companyFilter').value,
+                departmentId: document.getElementById('departmentFilter').value,
+            };
+            fetchDepartments(filters);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCompanies();
+            fetchDepartments();
+        });
+    </script>
+</body>
+</html>

@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS departements (
 );
 
 CREATE TABLE IF NOT EXISTS employees (
-    EmpoyeeId Integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+    EmployeeId Integer PRIMARY KEY AUTOINCREMENT NOT NULL,
     FirstName VARCHAR(50) NOT NULL,
     LastName VARCHAR(50) NOT NULL,
     JobId Integer NOT NULL,
