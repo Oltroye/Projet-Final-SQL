@@ -135,8 +135,8 @@
             const seniorOptions = document.getElementById('seniorOptions');
             seniors.forEach(senior => {
                 seniorOptions.innerHTML += `
-                    <input type="radio" id="senior-${senior.EmpoyeeId}" name="senior" value="${senior.EmpoyeeId}">
-                    <label for="senior-${senior.EmpoyeeId}">${senior.FirstName} ${senior.LastName}</label>
+                    <input type="radio" id="senior-${senior.EmployeeId}" name="senior" value="${senior.EmployeeId}">
+                    <label for="senior-${senior.EmployeeId}">${senior.FirstName} ${senior.LastName}</label>
                 `;
             });
         }

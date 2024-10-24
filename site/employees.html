@@ -12,5 +12,57 @@
     <a href="/employees"><button type="button" class="btn"><span class="text">employees</span></button></a>
     <a href="/formular"><button type="button" class="btn"><span class="text">formular</span></button></a>
     <a href="/department"><button type="button" class="btn"><span class="text">department</span></button></a>
+    <h1>Liste des Employés</h1>
+    <table id="employeesTable">
+        <thead>
+            <tr>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Poste</th>
+                <th>Date de Naissance</th>
+                <th>Date d'Embauche</th>
+                <th>Entreprise</th>
+                <th>Département</th>
+                <th>Pays</th>
+                <th>Ville</th>
+                <th>Adresse</th>
+                <th>Téléphone</th>
+                <th>Senior</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        function fetchEmployees() {
+            fetch('/api/employee')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#employeesTable tbody');
+                    tbody.innerHTML = '';
+                    data.forEach(employee => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${employee.FirstName}</td>
+                            <td>${employee.LastName}</td>
+                            <td>${employee.JobName}</td>
+                            <td>${employee.BirthDate}</td>
+                            <td>${employee.HireDate}</td>
+                            <td>${employee.CompanyName}</td>
+                            <td>${employee.DepartementName}</td>
+                            <td>${employee.Country}</td>
+                            <td>${employee.City}</td>
+                            <td>${employee.Address}</td>
+                            <td>${employee.PhoneNumber}</td>
+                            <td>${employee.SeniorFullName? employee.SeniorFullName : 'Aucun'}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Erreur lors de la récupération des employés:', error));
+        }
+        document.addEventListener('DOMContentLoaded', fetchEmployees);
+    </script>
 </body>
 </html>

@@ -38,6 +38,36 @@ app.get('/product', (req, res) => {
     res.sendFile(path.join(__dirname, 'site/product.html'));
 });
 
+app.get('/api/employee', (req, res) => {
+    const query = `
+        SELECT 
+            e.FirstName,
+            e.LastName,
+            j.JobName,
+            e.BirthDate,
+            e.HireDate,
+            c.CompanyName,
+            d.DepartementName,
+            e.Country,
+            e.City,
+            e.Address,
+            e.PhoneNumber,
+            s.FirstName || ' ' || s.LastName AS SeniorFullName
+        FROM employees e
+        JOIN jobs j ON e.JobId = j.JobId
+        JOIN companies c ON e.CompanyId = c.CompanyId
+        JOIN departements d ON e.DepartementId = d.DepartementId
+        LEFT JOIN employees s ON e.Senior = s.EmployeeId
+    `;
+
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
 app.get('/api/jobs', (req, res) => {
     const query = `SELECT JobId, JobName FROM jobs`;
     db.all(query, [], (err, rows) => {
@@ -69,7 +99,7 @@ app.get('/api/departments', (req, res) => {
 });
 
 app.get('/api/seniors', (req, res) => {
-    const query = `SELECT EmpoyeeId, FirstName, LastName FROM employees`;
+    const query = `SELECT EmployeeId, FirstName, LastName FROM employees`;
     db.all(query, [], (err, rows) => {
         if (err) {
             return res.status(500).send(err.message);
