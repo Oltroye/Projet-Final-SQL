@@ -1,5 +1,6 @@
 Système de Gestion des Employés
-Description du Projet
+
+Description du Projet :
 Ce projet consiste à créer un système de gestion des employés d'une entreprise. Il s'agit de gérer les informations des employés, des départements et des postes dans une entreprise via une interface web.
 Le projet inclut les fonctionnalités suivantes :
 
