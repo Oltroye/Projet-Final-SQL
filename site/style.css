@@ -1,22 +1,123 @@
+
+
+/* Style général pour le formulaire */
+form {
+    width: 80%;
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour les labels */
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Style pour les champs input et select */
+form input[type="text"],
+form input[type="date"],
+form input[type="number"],
+form input[type="email"],
+form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #f8f9fa;
+    color: #262626;
+    transition: border-color 0.3s ease-in-out;
+}
+
+/* Focus effect for inputs */
+form input:focus,
+form select:focus {
+    border-color: #c13584;
+    outline: none;
+}
+
+/* Style pour les boutons */
+form button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 50%, #dc2743 100%);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Hover effect for buttons */
+form button[type="submit"]:hover {
+    background: linear-gradient(45deg, #c13584 0%, #e6683c 50%, #f09433 100%);
+}
+
+/* Style pour le champ checkbox */
+form input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+/* Align the checkbox label inline */
+form label[for="status"] {
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+/* Style spécifique pour les titres du formulaire */
+h1 {
+    text-align: center;
+    font-size: 24px;
+    color: #c13584;
+    margin-bottom: 20px;
+}
+
+/* Centrer les éléments */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fafafa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Style pour le header et le menu */
 header {
-    background: #f8f9fa;
+    background: linear-gradient(45deg, #f09433, #dc2743, #c13584);
     padding: 10px 0;
+    color: white;
+    text-align: center;
+    font-weight: bold;
 }
+
 nav {
-    width: 90%;
-    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
 }
+
 nav ul {
     list-style: none;
     padding: 0;
-    text-align: center;
 }
+
 nav ul li {
     display: inline;
     margin-right: 20px;
 }
+
 nav ul li a {
     text-decoration: none;
-    color: #333;
+    color: white;
     font-weight: bold;
 }
