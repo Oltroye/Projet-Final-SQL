@@ -177,10 +177,14 @@
             const responseSeniors = await fetch('/api/seniors');
             const seniors = await responseSeniors.json();
             const seniorOptions = document.getElementById('seniorOptions');
+            const employeeNameLink = document.getElementById('employeeNameLink');
             seniorOptions.innerHTML = `<option value="">Sélectionnez un responsable</option>`;
 
             seniors.forEach(senior => {
                 seniorOptions.innerHTML += `
+                    <option value="${senior.EmployeeId}">${senior.FirstName} ${senior.LastName}</option>
+                `;
+                employeeNameLink.innerHTML += `
                     <option value="${senior.EmployeeId}">${senior.FirstName} ${senior.LastName}</option>
                 `;
             });
@@ -194,14 +198,6 @@
                 `;
             });
 
-            const responseEmployees = await fetch('/api/employee');
-            const employees = await responseEmployees.json();
-            const employeeNameLink = document.getElementById('employeeNameLink');
-            employees.forEach(employee => {
-                employeeNameLink.innerHTML += `
-                    <option value="${employee.EmployeeId}">${employee.FirstName} ${employee.LastName}</option>
-                `;
-            });
         }
     
         

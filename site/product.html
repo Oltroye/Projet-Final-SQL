@@ -45,51 +45,39 @@
     </table>
 
     <script>
+        function fetchEmployees() {
+            fetch('/api/employees')
+                .then(response => response.json())
+                .then(data => {
+                    const employeeSelect = document.getElementById('employeeSelect');
+                    data.forEach(employee => {
+                        const option = document.createElement('option');
+                        option.value = employee.EmployeeId; 
+                        option.textContent = `${employee.FirstName} ${employee.LastName}`;
+                        employeeSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Erreur lors de la récupération des employés:', error));
+        }
+
         function fetchProducts() {
             fetch('/api/products')
                 .then(response => response.json())
                 .then(data => {
-                    const productSelect = document.getElementById('productFilter');
+                    const productSelect = document.getElementById('productSelect');
                     data.forEach(product => {
                         const option = document.createElement('option');
-                        option.value = product.ProductName;
+                        option.value = product.ProductId; 
                         option.textContent = product.ProductName;
                         productSelect.appendChild(option);
                     });
                 })
                 .catch(error => console.error('Erreur lors de la récupération des produits:', error));
         }
-        function fetchEmployeeProducts(filters = {}) {
-            const params = new URLSearchParams(filters).toString();
-            fetch(`/api/employee-products${params ? '?' + params : ''}`)
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.querySelector('#employeeProductsTable tbody');
-                    tbody.innerHTML = '';
-                    data.forEach(entry => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${entry.fullName}</td>
-                            <td>${entry.ProductName}</td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Erreur lors de la récupération des produits des employés:', error));
-        }
-
-        document.getElementById('filterForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const filters = {
-                productName: document.getElementById('productFilter').value,
-                fullName: document.getElementById('fullNameFilter').value,
-            };
-            fetchEmployeeProducts(filters);
-        });
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchProducts();
-            fetchEmployeeProducts();
+            fetchEmployees(); 
         });
     </script>
 

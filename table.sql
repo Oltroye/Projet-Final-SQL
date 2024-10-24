@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS departement_job (
 
 CREATE TABLE IF NOT EXISTS employee_product (
     ProductId Integer NOT NULL,
-    EmpoyeeId Integer NOT NULL,
+    EmployeeId Integer NOT NULL,
     FOREIGN KEY (ProductId) REFERENCES products(ProductId),
-    FOREIGN KEY (EmpoyeeId) REFERENCES employees(EmpoyeeId)
+    FOREIGN KEY (EmployeeId) REFERENCES employees(EmployeeId)
 );
