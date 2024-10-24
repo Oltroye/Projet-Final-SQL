@@ -102,13 +102,16 @@ app.get('/api/employee', (req, res) => {
 });
 
 app.post('/add-link-product-employee', (req, res) => {
-    const { productNamelink, employeeNamelink } = req.body;
+    const { productId, employeeId } = req.body; 
+    if (!productId || !employeeId) {
+        return res.status(400).send('ProductId et EmployeeId sont requis.');
+    }
 
-    const query = `INSERT INTO employee_product (ProductId, EmpoyeeId) VALUES (?, ?)`;
+    const query = `INSERT INTO employee_product (ProductId, EmployeeId) VALUES (?, ?)`;
 
-    db.run(query, [productNamelink, employeeNamelink], function(err) {
+    db.run(query, [productId, employeeId], function(err) {
         if (err) {
-            console.error('Error linking product to employee:', err.message);
+            console.error('Erreur lors de l\'ajout du lien produit-employé:', err.message);
             return res.status(500).json({ error: err.message });
         }
         res.redirect('/formular');
@@ -273,6 +276,18 @@ app.post('/add-company', (req, res) => {
     });
 });
 
+app.post('/add-product', (req, res) => {
+    const { productName } = req.body;
+
+    const query = `INSERT INTO products (ProductName) VALUES (?)`;
+
+    db.run(query, [productName], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.redirect('/formular');
+    });
+});
 
 app.post('/add-job', (req, res) => {
     const { jobName } = req.body;
