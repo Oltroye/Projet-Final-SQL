@@ -23,24 +23,34 @@ db.exec(sqlScript, (err) => {
 
 app.use(express.static(path.join(__dirname, 'site')));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'site/homepage.html'));
-});
 app.get('/employees', (req, res) => {
     res.sendFile(path.join(__dirname, 'site/employees.html'));
 });
 app.get('/formular', (req, res) => {
     res.sendFile(path.join(__dirname, 'site/formular.html'));
 });
-app.get('/department', (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'site/department.html'));
 });
 app.get('/product', (req, res) => {
     res.sendFile(path.join(__dirname, 'site/product.html'));
 });
 
+app.get('/api/products', (req, res) => {
+    const query = `SELECT ProductId, ProductName FROM products`;
+
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
 app.get('/api/employee', (req, res) => {
-    const query = `
+    const { companyId, departmentId, jobId } = req.query;
+
+    let query = `
         SELECT 
             e.FirstName,
             e.LastName,
@@ -61,7 +71,29 @@ app.get('/api/employee', (req, res) => {
         LEFT JOIN employees s ON e.Senior = s.EmployeeId
     `;
 
-    db.all(query, [], (err, rows) => {
+    const params = [];
+    const conditions = [];
+
+    if (companyId) {
+        conditions.push('e.CompanyId = ?');
+        params.push(companyId);
+    }
+
+    if (departmentId) {
+        conditions.push('e.DepartementId = ?');
+        params.push(departmentId);
+    }
+
+    if (jobId) {
+        conditions.push('e.JobId = ?');
+        params.push(jobId);
+    }
+
+    if (conditions.length > 0) {
+        query += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    db.all(query, params, (err, rows) => {
         if (err) {
             return res.status(500).send(err.message);
         }
@@ -69,17 +101,49 @@ app.get('/api/employee', (req, res) => {
     });
 });
 
+app.post('/add-link-product-employee', (req, res) => {
+    const { productNamelink, employeeNamelink } = req.body;
+
+    const query = `INSERT INTO employee_product (ProductId, EmpoyeeId) VALUES (?, ?)`;
+
+    db.run(query, [productNamelink, employeeNamelink], function(err) {
+        if (err) {
+            console.error('Error linking product to employee:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.redirect('/formular');
+    });
+});
+
 app.get('/api/departments', (req, res) => {
-    const query = `
+    const { companyId, departmentId } = req.query;
+
+    let query = `
         SELECT 
-            d.DepartementId,
             d.DepartementName,
             c.CompanyName
         FROM departements d
-        LEFT JOIN companies c ON d.CompanyId = c.CompanyId
+        JOIN companies c ON d.CompanyId = c.CompanyId
     `;
-    
-    db.all(query, [], (err, rows) => {
+
+    const params = [];
+    const conditions = [];
+
+    if (companyId) {
+        conditions.push('d.CompanyId = ?');
+        params.push(companyId);
+    }
+
+    if (departmentId) {
+        conditions.push('d.DepartementId = ?');
+        params.push(departmentId);
+    }
+
+    if (conditions.length > 0) {
+        query += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    db.all(query, params, (err, rows) => {
         if (err) {
             return res.status(500).send(err.message);
         }
@@ -96,17 +160,6 @@ app.get('/api/jobs', (req, res) => {
         res.json(rows);
     });
 });
-
-
-/*app.get('/api/employees', (req, res) => {
-    const query = `SELECT * FROM employees`;
-    db.all(query, [], (err, rows) => {
-        if (err) {
-            return res.status(500).send(err.message);
-        }
-        res.json(rows);
-    });
-});*/
 app.get('/api/companies', (req, res) => {
     const query = `SELECT CompanyId, CompanyName FROM companies`;
     db.all(query, [], (err, rows) => {
@@ -138,18 +191,35 @@ app.get('/api/seniors', (req, res) => {
 });
 
 app.get('/api/employee-products', (req, res) => {
-    const query = `
+    const { productName, fullName } = req.query;
+
+    let query = `
         SELECT 
-            e.EmployeeId,
-            e.FirstName,
-            e.LastName,
+            e.FirstName || ' ' || e.LastName,
             p.ProductName
-        FROM employee_product ep
-        JOIN employees e ON ep.EmpoyeeId = e.EmployeeId
+        FROM employees e
+        JOIN employee_products ep ON e.EmployeeId = ep.EmployeeId
         JOIN products p ON ep.ProductId = p.ProductId
     `;
-    
-    db.all(query, [], (err, rows) => {
+
+    const params = [];
+    const conditions = [];
+
+    if (productName) {
+        conditions.push('p.ProductName = ?');
+        params.push(productName);
+    }
+
+    if (fullName) {
+        conditions.push('(e.FirstName || " " || e.LastName) LIKE ?');
+        params.push(`%${fullName}%`);
+    }
+
+    if (conditions.length > 0) {
+        query += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    db.all(query, params, (err, rows) => {
         if (err) {
             return res.status(500).send(err.message);
         }
@@ -170,7 +240,7 @@ app.post('/add-employee', (req, res) => {
         city,
         address,
         phoneNumber,
-        senior = req.body.senior && req.body.senior !== '' ? req.body.senior : null,
+        senior = req.body.senior ? parseInt(req.body.senior, 10) : null,
         status
     } = req.body;
 
@@ -184,18 +254,6 @@ app.post('/add-employee', (req, res) => {
     db.run(query, [firstName, lastName, jobId, birthDate, hireDate, companyId, departmentId, country, city, address, phoneNumber, senior, status], function(err) {
         if (err) {
             return res.status(500).send('Erreur lors de l\'ajout de l\'employé: ' + err.message);
-        }
-        res.redirect('/formular');
-    });
-});
-app.post('/add-product', (req, res) => {
-    const { productName } = req.body;
-
-    const query = `INSERT INTO products (ProductName) VALUES (?)`;
-
-    db.run(query, [productName], function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
         }
         res.redirect('/formular');
     });

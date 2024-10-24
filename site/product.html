@@ -3,49 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Employee Management</title>
 </head>
-<style>
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 20px 0;
-    }
-
-    table, th, td {
-        border: 1px solid #ddd;
-    }
-
-    th, td {
-        padding: 8px;
-        text-align: left;
-    }
-
-    th {
-        background-color: #f2f2f2;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    tr:hover {
-        background-color: #f1f1f1;
-    }
-</style>
 <body>
-    <p>product</p>
-    <a href="/"><button type="button" class="btn"><span class="text">homepage</span></button></a>
-    <a href="/product"><button type="button" class="btn"><span class="text">product</span></button></a>
-    <a href="/employees"><button type="button" class="btn"><span class="text">employees</span></button></a>
-    <a href="/formular"><button type="button" class="btn"><span class="text">formular</span></button></a>
-    <a href="/department"><button type="button" class="btn"><span class="text">department</span></button></a>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Département</a></li>
+                <li><a href="/employees">Employé</a></li>
+                <li><a href="/formular">Formulaire</a></li>
+                <li><a href="/product">Produit</a></li>
+            </ul>
+        </nav>
+    </header>
     <h1>Produits des Employés</h1>
+    <form id="filterForm">
+        <div>
+            <label for="productFilter">Filtrer par Produit:</label>
+            <select id="productFilter" name="productName">
+                <option value="">Tous</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="fullNameFilter">Filtrer par Nom Complet:</label>
+            <input type="text" id="fullNameFilter" name="fullName" placeholder="Nom Complet">
+        </div>
+
+        <button type="submit">Filtrer</button>
+    </form>
     <table id="employeeProductsTable">
         <thead>
             <tr>
-                <th>Prénom</th>
-                <th>Nom</th>
+                <th>Prénom nom</th>
                 <th>Nom du Produit</th>
             </tr>
         </thead>
@@ -54,8 +45,23 @@
     </table>
 
     <script>
-        function fetchEmployeeProducts() {
-            fetch('/api/employee-products')
+        function fetchProducts() {
+            fetch('/api/products')
+                .then(response => response.json())
+                .then(data => {
+                    const productSelect = document.getElementById('productFilter');
+                    data.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.ProductName;
+                        option.textContent = product.ProductName;
+                        productSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Erreur lors de la récupération des produits:', error));
+        }
+        function fetchEmployeeProducts(filters = {}) {
+            const params = new URLSearchParams(filters).toString();
+            fetch(`/api/employee-products${params ? '?' + params : ''}`)
                 .then(response => response.json())
                 .then(data => {
                     const tbody = document.querySelector('#employeeProductsTable tbody');
@@ -63,8 +69,7 @@
                     data.forEach(entry => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${entry.FirstName}</td>
-                            <td>${entry.LastName}</td>
+                            <td>${entry.fullName}</td>
                             <td>${entry.ProductName}</td>
                         `;
                         tbody.appendChild(row);
@@ -72,7 +77,20 @@
                 })
                 .catch(error => console.error('Erreur lors de la récupération des produits des employés:', error));
         }
-        document.addEventListener('DOMContentLoaded', fetchEmployeeProducts);
+
+        document.getElementById('filterForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const filters = {
+                productName: document.getElementById('productFilter').value,
+                fullName: document.getElementById('fullNameFilter').value,
+            };
+            fetchEmployeeProducts(filters);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+            fetchEmployeeProducts();
+        });
     </script>
 
 </body>

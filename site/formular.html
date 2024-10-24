@@ -10,11 +10,10 @@
     <header>
         <nav>
             <ul>
-                <li><a href="homepage.html">Accueil</a></li>
-                <li><a href="department.html">Département</a></li>
-                <li><a href="employees.html">Employé</a></li>
-                <li><a href="formular.html">Formulaire</a></li>
-                <li><a href="product.html">Produit</a></li>
+                <li><a href="/">Département</a></li>
+                <li><a href="/employees">Employé</a></li>
+                <li><a href="/formular">Formulaire</a></li>
+                <li><a href="/product">Produit</a></li>
             </ul>
         </nav>
     </header>
@@ -85,7 +84,7 @@
 
         <label for ="senior">Responsable</label>
         <select id="seniorOptions" name="senior">
-            <option value="">Sélectionnez un responsable</option>
+            <option>Sélectionnez un responsable</option>
         </select><br><br>
 
         <label for="birthDate">Date de Naissance :</label>
@@ -123,6 +122,21 @@
         <label for="productName">Product Name:</label>
         <input type="text" id="productName" name="productName" required><br><br>
 
+        <button type="submit">Ajouter un produit</button>
+    </form>
+
+    <h1>employee vend un nouveau produit</h1>
+    <form action="/add-link-product-employee" method="POST">
+        <label for="productNameLink">Nom du produit :</label>
+        <select id="productNameLink" name="productNamelink" required>
+            <option value="">Sélectionnez un produit</option>
+        </select>
+
+        <label for="employeeNameLink">Nom de l'employé :</label>
+        <select id="employeeNameLink" name="employeeNamelink" required>
+            <option value="">Sélectionnez un employé</option>
+        </select>
+        
         <button type="submit">Ajouter un produit</button>
     </form>
     
@@ -167,7 +181,25 @@
 
             seniors.forEach(senior => {
                 seniorOptions.innerHTML += `
-                    <option value="${senior.EmpoyeeId}">${senior.FirstName} ${senior.LastName}</option>
+                    <option value="${senior.EmployeeId}">${senior.FirstName} ${senior.LastName}</option>
+                `;
+            });
+
+            const responseProducts = await fetch('/api/products');
+            const products = await responseProducts.json();
+            const productNameLink = document.getElementById('productNameLink');
+            products.forEach(product => {
+                productNameLink.innerHTML += `
+                    <option value="${product.ProductId}">${product.ProductName}</option>
+                `;
+            });
+
+            const responseEmployees = await fetch('/api/employee');
+            const employees = await responseEmployees.json();
+            const employeeNameLink = document.getElementById('employeeNameLink');
+            employees.forEach(employee => {
+                employeeNameLink.innerHTML += `
+                    <option value="${employee.EmployeeId}">${employee.FirstName} ${employee.LastName}</option>
                 `;
             });
         }

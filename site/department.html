@@ -3,44 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Employee Management</title>
 </head>
-<style>
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 20px 0;
-    }
-
-    table, th, td {
-        border: 1px solid #ddd;
-    }
-
-    th, td {
-        padding: 8px;
-        text-align: left;
-    }
-
-    th {
-        background-color: #f2f2f2;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    tr:hover {
-        background-color: #f1f1f1;
-    }
-</style>
 <body>
-    <p>departement</p>
-    <a href="/"><button type="button" class="btn"><span class="text">homepage</span></button></a>
-    <a href="/product"><button type="button" class="btn"><span class="text">product</span></button></a>
-    <a href="/employees"><button type="button" class="btn"><span class="text">employees</span></button></a>
-    <a href="/formular"><button type="button" class="btn"><span class="text">formular</span></button></a>
-    <a href="/department"><button type="button" class="btn"><span class="text">department</span></button></a>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Département</a></li>
+                <li><a href="/employees">Employé</a></li>
+                <li><a href="/formular">Formulaire</a></li>
+                <li><a href="/product">Produit</a></li>
+            </ul>
+        </nav>
+    </header>
     <h1>Liste des Départements</h1>
+    <form id="filterForm">
+        <div>
+            <label for="companyFilter">Filtrer par Entreprise:</label>
+            <select id="companyFilter" name="companyId">
+                <option value="">Tous</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="departmentFilter">Filtrer par Département:</label>
+            <select id="departmentFilter" name="departmentId">
+                <option value="">Tous</option>
+            </select>
+        </div>
+
+        <button type="submit">Filtrer</button>
+    </form>
+    
     <table id="departmentsTable">
         <thead>
             <tr>
@@ -53,8 +48,24 @@
     </table>
 
     <script>
-        function fetchDepartments() {
-            fetch('/api/departments')
+        function fetchCompanies() {
+            fetch('/api/companies')
+                .then(response => response.json())
+                .then(data => {
+                    const companySelect = document.getElementById('companyFilter');
+                    data.forEach(company => {
+                        const option = document.createElement('option');
+                        option.value = company.CompanyId;
+                        option.textContent = company.CompanyName;
+                        companySelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Erreur lors de la récupération des entreprises:', error));
+        }
+
+        function fetchDepartments(filters = {}) {
+            const params = new URLSearchParams(filters).toString();
+            fetch(`/api/departments${params ? '?' + params : ''}`)
                 .then(response => response.json())
                 .then(data => {
                     const tbody = document.querySelector('#departmentsTable tbody');
@@ -70,7 +81,20 @@
                 })
                 .catch(error => console.error('Erreur lors de la récupération des départements:', error));
         }
-        document.addEventListener('DOMContentLoaded', fetchDepartments);
+
+        document.getElementById('filterForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const filters = {
+                companyId: document.getElementById('companyFilter').value,
+                departmentId: document.getElementById('departmentFilter').value,
+            };
+            fetchDepartments(filters);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCompanies();
+            fetchDepartments();
+        });
     </script>
 </body>
 </html>
