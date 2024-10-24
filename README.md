@@ -9,10 +9,21 @@ Il s'agit de gérer les informations des employés, des départements et des pos
 Le projet inclut les fonctionnalités suivantes :
 
 Stockage des informations des employés, départements et postes dans une base de données SQL.
+
 Affichage des données sur une page web à l'aide d'HTML et CSS.
+
 Ajout d'interactivité avec JavaScript, permettant d'interagir avec la base de données via des formulaires HTML.
+
 Navigation entre les différentes sections de l'interface utilisateur.
-Ce projet a été réalisé dans le cadre du cursus Nantes Ynov Campus, en utilisant les technologies suivantes : SQLite, HTML, CSS, JavaScript. Nous avons utilisé VSCode comme éditeur de code principal.
+
+Ce projet a été réalisé dans le cadre du cursus Nantes Ynov Campus, en utilisant les technologies suivantes :
+
+SQLite, 
+HTML, 
+CSS, 
+JavaScript. 
+
+Nous avons utilisé VSCode comme éditeur de code principal.
 
 Objectifs
 Les principaux objectifs de ce projet sont :
