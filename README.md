@@ -61,25 +61,43 @@ Structure de la Base de Données
 La base de données SQLite comporte plusieurs tables pour gérer les différentes entités :
 
 jobs : Stocke les informations sur les postes disponibles dans l'entreprise.
+
 companies : Stocke les informations sur les entreprises.
+
 departements : Stocke les départements au sein de chaque entreprise.
+
 employees : Stocke les informations sur les employés, y compris leur poste, département, et entreprise.
+
 products : Stocke les informations sur les produits (s'il y a une gestion de produits dans l'entreprise).
+
 Chaque table est liée par des clés étrangères pour assurer l'intégrité des données.
 
 Installation
+
 Clonez le dépôt du projet.
+
 Installez les dépendances Node.js en exécutant :
+
 npm install
+
 Assurez-vous que la base de données SQLite (entreprise.db) est présente dans le répertoire principal du projet.
+
 Pour démarrer le serveur, exécutez :
+
 node server.js
+
 Ouvrez votre navigateur et accédez à http://localhost:3000 pour voir l'interface utilisateur.
+
 Utilisation
+
 Ajout d'employés : Remplissez les formulaires disponibles pour ajouter des employés à la base de données.
+
 Affichage des départements et postes : Les départements et les postes peuvent être ajoutés et gérés via des formulaires similaires, et vous pouvez les afficher dans l'interface.
+
 Gestion des entreprises : Vous pouvez ajouter des informations sur des entreprises et leurs départements.
-Auteurs
+
+Auteurs:
+
 Ce projet a été réalisé par JOLY Cassian et IBRAHIM Stanislas dans le cadre du projet final en SQL dans la filière de Bachelor Informatique à Nantes Ynov Campus.
 
 
