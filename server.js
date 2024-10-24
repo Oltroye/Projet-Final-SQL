@@ -6,6 +6,9 @@ const fs = require('fs');
 const app = express();
 const PORT = 3000;
 
+app.use(express.urlencoded({ extended: true }));
+
+
 
 app.use(express.static(path.join(__dirname)));
 const db = new sqlite3.Database(path.join(__dirname, 'entreprise.db'), (err) => {
@@ -21,10 +24,171 @@ db.exec(sqlScript, (err) => {
     }
 });
 
+app.use(express.static(path.join(__dirname, 'site')));
+
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'html.html'));
+    res.sendFile(path.join(__dirname, '/site/homepage.html'));
+});
+app.get('/department', (req, res) => {
+    res.sendFile(path.join(__dirname, '/site/department.html'));
+});
+app.get('/employees', (req, res) => {
+    res.sendFile(path.join(__dirname, '/site/employees.html'));
+});
+app.get('/formular', (req, res) => {
+    res.sendFile(path.join(__dirname, '/site/formular.html'));
 });
 
+app.get('/product', (req, res) => {
+    res.sendFile(path.join(__dirname, '/site/product.html'));
+});
+
+app.get('/api/jobs', (req, res) => {
+    const query = `SELECT JobId, JobName FROM jobs`;
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
+
+app.get('/api/employees', (req, res) => {
+    const query = `SELECT * FROM employees`;
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
+
+app.get('/api/companies', (req, res) => {
+    const query = `SELECT CompanyId, CompanyName FROM companies`;
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
+app.get('/api/departments', (req, res) => {
+    const query = `SELECT DepartementId, DepartementName FROM departements`;
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
+app.get('/api/seniors', (req, res) => {
+    const query = `SELECT EmployeeId, FirstName, LastName FROM employees`;
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
+app.post('/add-employee', (req, res) => {
+    const {
+        firstName,
+        lastName,
+        jobId,
+        birthDate,
+        hireDate,
+        companyId,  // Récupère l'ID de l'entreprise
+        departmentId,
+        country,
+        city,
+        address,
+        phoneNumber,
+        senior = req.body.senior && req.body.senior !== '' ? req.body.senior : null,
+        status
+    } = req.body;
+
+    if (!companyId) {
+        return res.status(400).send('Entreprise non sélectionnée.');
+    }
+
+    const query = `INSERT INTO employees (FirstName, LastName, JobId, BirthDate, HireDate, CompanyId, DepartementId, Country, City, Address, PhoneNumber, Senior, Status)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    db.run(query, [firstName, lastName, jobId, birthDate, hireDate, companyId, departmentId, country, city, address, phoneNumber, senior, status], function(err) {
+        if (err) {
+            return res.status(500).send('Erreur lors de l\'ajout de l\'employé: ' + err.message);
+        }
+        res.redirect('/formular');
+    });
+});
+
+
+app.post('/add-product', (req, res) => {
+    const { productName } = req.body;
+
+    const query = `INSERT INTO products (ProductName) VALUES (?)`;
+
+    db.run(query, [productName], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.redirect('/formular');
+    });
+});
+
+app.post('/add-company', (req, res) => {
+    console.log('Données reçues:', req.body); // Affiche les données envoyées par le formulaire
+    const { companyName, companySize, activity } = req.body;
+
+    // Vérification si les données sont présentes
+    if (!companyName || !companySize || !activity) {
+        return res.status(400).send('Tous les champs sont requis.');
+    }
+
+    const query = `INSERT INTO companies (CompanyName, CompanySize, Activity)
+                   VALUES (?, ?, ?)`;
+
+    db.run(query, [companyName, companySize, activity], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.redirect('/formular');
+    });
+});
+
+
+app.post('/add-job', (req, res) => {
+    const { jobName } = req.body;
+
+    const query = `INSERT INTO jobs (JobName) VALUES (?)`;
+
+    db.run(query, [jobName], function(err) {
+        if (err) {
+            console.error('Error adding job:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.redirect('/formular');
+    });
+});
+
+app.post('/add-department', (req, res) => {
+    const { companyId, departmentName } = req.body;
+
+    const query = `INSERT INTO departements (CompanyId, DepartementName)
+                   VALUES (?, ?)`;
+
+    db.run(query, [companyId, departmentName], function(err) {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.redirect('/formular');
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
