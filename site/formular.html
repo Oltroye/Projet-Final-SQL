@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Formulaire</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="homepage.html">Accueil</a></li>
+                <li><a href="department.html">Département</a></li>
+                <li><a href="employees.html">Employé</a></li>
+                <li><a href="formular.html">Formulaire</a></li>
+                <li><a href="product.html">Produit</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Ajouter une entreprise</h1>
+    <form action="/add-company" method="POST">
+        <label for="companyName">Nom de l'entreprise :</label>
+        <input type="text" id="companyName" name="companyName" required>
+    
+        <label for="companySize">Taille de l'entreprise :</label>
+        <input type="number" id="companySize" name="companySize" required>
+    
+        <label for="activity">Activité :</label>
+        <input type="text" id="activity" name="activity" required>
+    
+        <button type="submit">Ajouter</button>
+    </form>
+    
+
+    <h1>Ajouter un département</h1>
+    <form id="departmentForm" action="/add-department" method="POST">
+        <label for="companyId">Entreprise :</label>
+        <select id="companyOptions" name="companyId" required>
+            <option value="">Sélectionnez une entreprise</option>
+        </select>
+    
+        <label for="departmentName">Nom du département :</label>
+        <input type="text" id="departmentName" name="departmentName" required><br><br>
+    
+        <button type="submit">Ajouter</button>
+    </form>
+    
+
+    <h1>Ajouter un poste</h1>
+    <form id="jobForm" action="/add-job" method="POST">
+        <label for="jobName">Nom du poste :</label>
+        <input type="text" id="jobName" name="jobName" required>
+
+        <button type="submit">Ajouter</button>
+    </form> 
+
+    <h1>Ajouter un employé</h1>
+    <form id="employeeForm" action="/add-employee" method="POST">
+        
+        <label for="firstName">Prénom :</label>
+        <input type="text" id="firstName" name="firstName" required><br><br>
+
+        
+        <label for="lastName">Nom :</label>
+        <input type="text" id="lastName" name="lastName" required><br><br>
+
+        
+        <label for="companyId">Entreprise :</label>
+        <select id="companyS" name="companyId" required>
+            <option value="">Sélectionnez une entreprise</option>
+        </select><br><br>
+
+        
+        <label for="departmentId">Département :</label>
+        <select id="departmentOptions" name="departmentId" required>
+            <option value="">Sélectionnez un département</option>
+        </select><br><br>
+
+        
+        <label for="jobId">Poste :</label>
+        <select id="jobOptions" name="jobId" required>
+            <option value="">Sélectionnez un poste</option>
+        </select><br><br>
+
+        <label for ="senior">Responsable</label>
+        <select id="seniorOptions" name="senior">
+            <option value="">Sélectionnez un responsable</option>
+        </select><br><br>
+
+        <label for="birthDate">Date de Naissance :</label>
+        <input type="date" id="birthDate" name="birthDate" required><br><br>
+
+        
+        <label for="hireDate">Date d'embauche :</label>
+        <input type="date" id="hireDate" name="hireDate" required><br><br>
+
+        
+        <label for="country">Pays :</label>
+        <input type="text" id="country" name="country" required><br><br>
+
+        
+        <label for="city">Ville :</label>
+        <input type="text" id="city" name="city" required><br><br>
+
+        
+        <label for="address">Adresse :</label>
+        <input type="text" id="address" name="address" required><br><br>
+
+       
+        <label for="phoneNumber">Téléphone :</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" required><br><br>
+
+        
+        <label for="status">Statut :</label>
+        <input type="checkbox" id="status" name="status" value="1"> Actif<br><br>
+
+        <button type="submit">Ajouter l'employé</button>
+    </form>
+
+    <h1>Nouveau produit</h1>
+    <form action="/add-product" method="POST">
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" required><br><br>
+
+        <button type="submit">Ajouter un produit</button>
+    </form>
+    
+    <script>
+        async function fetchData() {
+            // Récupérer les jobs et remplir les options des jobs
+            const responseJobs = await fetch('/api/jobs');
+            const jobs = await responseJobs.json();
+            const jobOptions = document.getElementById('jobOptions');
+            jobs.forEach(job => {
+                jobOptions.innerHTML += `
+                    <option value="${job.JobId}">${job.JobName}</option>
+                `;
+            });
+
+            const responseCompanies = await fetch('/api/companies');
+            const companies = await responseCompanies.json();
+            const companyOptions = document.getElementById('companyOptions');
+            const companyS = document.getElementById('companyS');
+            companies.forEach(company => {
+                companyOptions.innerHTML += `
+                    <option value="${company.CompanyId}">${company.CompanyName}</option>
+                `;
+                companyS.innerHTML += `
+                    <option value="${company.CompanyId}">${company.CompanyName}</option>
+                `;
+            });
+
+    
+            // Récupérer les départements et remplir les options des départements
+            const responseDepartments = await fetch('/api/departments');
+            const departments = await responseDepartments.json();
+            const departmentOptions = document.getElementById('departmentOptions');
+            departments.forEach(department => {
+                departmentOptions.innerHTML += `
+                    <option value="${department.DepartementId}">${department.DepartementName}</option>
+                `;
+            });
+    
+            // Récupérer les seniors (employés) et remplir les options des seniors
+            const responseSeniors = await fetch('/api/seniors');
+            const seniors = await responseSeniors.json();
+            const seniorOptions = document.getElementById('seniorOptions');
+            seniorOptions.innerHTML = `<option value="">Sélectionnez un responsable</option>`; // Ajout d'une option par défaut
+
+            seniors.forEach(senior => {
+                seniorOptions.innerHTML += `
+                    <option value="${senior.EmpoyeeId}">${senior.FirstName} ${senior.LastName}</option>
+                `;
+            });
+        }
+    
+        async function fetchCompanies() {
+    
+        }
+    
+        
+        fetchData();
+    </script>
+    
+</body>
+</html>
