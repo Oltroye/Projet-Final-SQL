@@ -7,7 +7,6 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.urlencoded({ extended: true }));
-
 app.use(express.static(path.join(__dirname)));
 const db = new sqlite3.Database(path.join(__dirname, 'entreprise.db'), (err) => {
     if (err) {
@@ -21,6 +20,8 @@ db.exec(sqlScript, (err) => {
         console.error('Error executing SQL script:', err.message);
     }
 });
+
+app.use(express.static(path.join(__dirname, 'site')));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'site/homepage.html'));
@@ -96,6 +97,16 @@ app.get('/api/jobs', (req, res) => {
     });
 });
 
+
+/*app.get('/api/employees', (req, res) => {
+    const query = `SELECT * FROM employees`;
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});*/
 app.get('/api/companies', (req, res) => {
     const query = `SELECT CompanyId, CompanyName FROM companies`;
     db.all(query, [], (err, rows) => {
@@ -155,25 +166,28 @@ app.post('/add-employee', (req, res) => {
         hireDate,
         companyId,
         departmentId,
-        senior = req.body.senior ? req.body.senior : null,
         country,
         city,
         address,
         phoneNumber,
+        senior = req.body.senior && req.body.senior !== '' ? req.body.senior : null,
         status
     } = req.body;
 
-    const query = `INSERT INTO employees (FirstName, LastName, JobId, BirthDate, HireDate, CompanyId, DepartementId, Senior, Country, City, Address, PhoneNumber, Status)
+    if (!companyId) {
+        return res.status(400).send('Entreprise non sélectionnée.');
+    }
+
+    const query = `INSERT INTO employees (FirstName, LastName, JobId, BirthDate, HireDate, CompanyId, DepartementId, Country, City, Address, PhoneNumber, Senior, Status)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    
-    db.run(query, [firstName, lastName, jobId, birthDate, hireDate, companyId, departmentId, senior, country, city, address, phoneNumber, status], function(err) {
+
+    db.run(query, [firstName, lastName, jobId, birthDate, hireDate, companyId, departmentId, country, city, address, phoneNumber, senior, status], function(err) {
         if (err) {
-            return res.status(500).send(err.message);
+            return res.status(500).send('Erreur lors de l\'ajout de l\'employé: ' + err.message);
         }
         res.redirect('/formular');
     });
 });
-
 app.post('/add-product', (req, res) => {
     const { productName } = req.body;
 
@@ -200,6 +214,7 @@ app.post('/add-company', (req, res) => {
         res.redirect('/formular');
     });
 });
+
 
 app.post('/add-job', (req, res) => {
     const { jobName } = req.body;
